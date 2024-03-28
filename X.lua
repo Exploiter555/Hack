@@ -5,6 +5,29 @@ local function highlightPlayer(player)
                 part.Color = Color3.new(1, 0, 0)
             end
         end
+        
+        -- Create a part beneath the player's character
+        local rootPart = player.Character:FindFirstChild("HumanoidRootPart")
+        if rootPart then
+            local part = Instance.new("Part")
+            part.Name = "HighlightPart"
+            part.Size = Vector3.new(4, 0.2, 4) -- Adjust size as needed
+            part.Position = rootPart.Position - Vector3.new(0, 2, 0) -- Position it beneath the character
+            part.Anchored = true
+            part.CanCollide = false -- Disable collision
+            part.Transparency = 0.5
+            part.Parent = workspace
+        end
+    end
+end
+
+local function highlightPlayer(player)
+    if player and player.Character then
+        for _, part in pairs(player.Character:GetChildren()) do
+            if part:IsA("BasePart") then
+                part.Color = Color3.new(1, 0, 0)
+            end
+        end
     end
 end
 
