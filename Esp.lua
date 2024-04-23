@@ -1,109 +1,35 @@
--- Function to create a rainbow color
-local function rainbowColor()
-    local frequency = 0.3
-    local phase = 0
-    local center = 128
-    local width = 127
-    local red = math.sin(frequency*1 + phase) * width + center
-    local green = math.sin(frequency*2 + phase) * width + center
-    local blue = math.sin(frequency*3 + phase) * width + center
-    return Color3.fromRGB(red, green, blue)
-end
+--- Tut
 
--- Function to draw rainbow line
-local function drawRainbowLine(startPos, endPos)
-    local rainbowLine = Instance.new("Part")
-    rainbowLine.Anchored = true
-    rainbowLine.Size = Vector3.new(0.1, 0.1, (startPos - endPos).magnitude)
-    rainbowLine.CFrame = CFrame.new(startPos, endPos) * CFrame.new(0, 0, -rainbowLine.Size.Z/2)
-    rainbowLine.Color = rainbowColor()
-    rainbowLine.Parent = workspace
-    return rainbowLine
-end
+local esp_settings = {
+    textsize = 8,
+    colour = 255,255,255
+}
 
--- Function to track all players
-local function trackPlayers()
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local rootPart = player.Character.HumanoidRootPart
-            for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
-                if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local otherRootPart = otherPlayer.Character.HumanoidRootPart
-                    drawRainbowLine(rootPart.Position, otherRootPart.Position)
-                end
-            end
-        end
+local gui = Instance.new("BillboardGui")
+local esp = Instance.new("TextLabel",gui)
+
+
+
+gui.Name = "Cracked esp"; 
+gui.ResetOnSpawn = false
+gui.AlwaysOnTop = true;
+gui.LightInfluence = 0;
+gui.Size = UDim2.new(1.75, 0, 1.75, 0);
+esp.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
+esp.Text = ""
+esp.Size = UDim2.new(0.0001, 0.00001, 0.0001, 0.00001);
+esp.BorderSizePixel = 4;
+esp.BorderColor3 = Color3.new(esp_settings.colour)
+esp.BorderSizePixel = 0
+esp.Font = "GothamSemibold"
+esp.TextSize = esp_settings.textsize
+esp.TextColor3 = Color3.fromRGB(esp_settings.colour) -- text colour
+
+game:GetService("RunService").RenderStepped:Connect(function() ---- loops faster than a while loop :)
+    for i,v in pairs (game:GetService("Players"):GetPlayers()) do
+        if v ~= game:GetService("Players").LocalPlayer and v.Character.Head:FindFirstChild("Cracked esp")==nil  then -- craeting checks for team check, local player etc
+            esp.Text = "{"..v.Name.."}"
+            gui:Clone().Parent = v.Character.Head
     end
 end
-
--- Call trackPlayers function repeatedly
-while true do
-    trackPlayers()
-    wait(0.028) -- Adjust the wait time as needed
-end
-
-
-local function highlightPlayer(player)
-    if player and player.Character then
-        for _, part in pairs(player.Character:GetChildren()) do
-            if part:IsA("BasePart") then
-                part.Color = Color3.new(1, 0, 0)
-            end
-        end
-    end
-end
-
-local function removeHighlight(player)
-    if player and player.Character then
-        for _, part in pairs(player.Character:GetChildren()) do
-            if part:IsA("BasePart") then
-                part.Color = Color3.new(1, 1, 1)
-            end
-        end
-    end
-end
-
-local function addNameTag(player)
-    local tag = Instance.new("TextLabel")
-    tag.Name = "NameTag"
-    tag.Text = player.Name
-    tag.Size = UDim2.new(0, 100, 0, 20)
-    tag.BackgroundColor3 = Color3.new(1, 1, 1)
-    tag.TextColor3 = Color3.new(0, 0, 0)
-    tag.BorderSizePixel = 1
-    tag.Parent = player.Character.Head
-    tag.Position = UDim2.new(0, -tag.Size.X.Offset/2, 0, -30) -- Adjust the offset as needed
-end
-
-local function removeNameTag(player)
-    local tag = player.Character:FindFirstChild("NameTag")
-    if tag then
-        tag:Destroy()
-    end
-end
-
-local function highlightAllPlayers()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        highlightPlayer(player)
-        addNameTag(player)
-    end
-end
-
-local function removeAllHighlights()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        removeHighlight(player)
-        removeNameTag(player)
-    end
-end
-
-game.Players.PlayerAdded:Connect(function(player)
-    highlightPlayer(player)
-    addNameTag(player)
 end)
-
-game.Players.PlayerRemoving:Connect(function(player)
-    removeHighlight(player)
-    removeNameTag(player)
-end)
-
-highlightAllPlayers()
